@@ -10,29 +10,21 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         ? 1
         : VERIFICATION_BLOCK_CONFIRMATIONS
 
-    log("------------------Deploying------------------")
+    log("----------------Deploying---------------------")
 
-    const box = await deploy("Box", {
+    const boxv2 = await deploy("BoxV2", {
         from: deployer,
         args: [],
         log: true,
         waitBlockConfirmations: waitBlockConfirmations,
-        proxy: {
-            proxyContract: "OpenZeppelinTransparentProxy",
-            viaAdminContract: {
-                name: "BoxProxyAdmin",
-                artifact: "BoxProxyAdmin",
-            },
-        },
     })
 
     // Verify the deployment
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
-        logger("Verifying...")
-        const boxAddress = (await ethers.getContractAt("Box_Implementation")).address
-        await verify(boxAddress, [])
+        log("Verifying...")
+        await verify(boxv2.address, [])
     }
-    log("--------------------Finished Deploying-------------------------------")
+    log("---------------------Finished Deploying----------------------------")
 }
 
-module.exports.tags = ["all", "box"]
+module.exports.tags = ["all", "boxv2"]
