@@ -10,7 +10,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         ? 1
         : VERIFICATION_BLOCK_CONFIRMATIONS
 
-    log("----------------Deploying---------------------")
+    log("-------------------------------------")
 
     const boxv2 = await deploy("BoxV2", {
         from: deployer,
@@ -24,7 +24,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         log("Verifying...")
         await verify(boxv2.address, [])
     }
-    log("---------------------Finished Deploying----------------------------")
+    log("-------------------------------------------------")
 }
 
 module.exports.tags = ["all", "boxv2"]
