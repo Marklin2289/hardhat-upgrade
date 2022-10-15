@@ -1,5 +1,6 @@
 const { developmentChains, VERIFICATION_BLOCK_CONFIRMATIONS } = require("../helper-hardhat-config")
-const { network, ethers } = require("hardhat")
+
+const { network } = require("hardhat")
 const { verify } = require("../utils/verify")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
@@ -10,13 +11,13 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         ? 1
         : VERIFICATION_BLOCK_CONFIRMATIONS
 
-    log("------------------Deploying------------------")
+    log("----------------------------------------------------")
 
     const box = await deploy("Box", {
         from: deployer,
         args: [],
         log: true,
-        waitBlockConfirmations: waitBlockConfirmations,
+        waitConfirmations: waitBlockConfirmations,
         proxy: {
             proxyContract: "OpenZeppelinTransparentProxy",
             viaAdminContract: {
@@ -26,13 +27,16 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         },
     })
 
+    // Be sure to check out the hardhat-deploy examples to use UUPS proxies!
+    // https://github.com/wighawag/template-ethereum-contracts
+
     // Verify the deployment
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
-        logger("Verifying...")
-        const boxAddress = (await ethers.getContractAt("Box_Implementation")).address
+        log("Verifying...")
+        const boxAddress = (await ethers.getContract("Box_Implementation")).address
         await verify(boxAddress, [])
     }
-    log("--------------------Finished Deploying-------------------------------")
+    log("----------------------------------------------------")
 }
 
 module.exports.tags = ["all", "box"]
